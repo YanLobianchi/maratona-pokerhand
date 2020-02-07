@@ -1,8 +1,9 @@
 package br.com.zgsolucoes.maratonapokerhand.model
 
+
 import br.com.zgsolucoes.maratonapokerhand.mao.Mao
-import br.com.zgsolucoes.maratonapokerhand.model.Carta
-import br.com.zgsolucoes.maratonapokerhand.model.Jogador
+
+import java.util.stream.Collectors
 
 class Rodada {
 
@@ -17,7 +18,26 @@ class Rodada {
 	}
 
 	ResultadoRodada obtenhaResultado() {
+		if (!jogadores) {
+			return null
+		}
 
+		final List<Jogador> jogadoresOrdenados = jogadores.stream().sorted().collect(Collectors.toList())
+		final Jogador jogadorComMaiorPontuacao = jogadoresOrdenados.last()
+
+		final List<Jogador> empatados = []
+
+		for (int i = jogadoresOrdenados.size() - 1; i > -1; i--) {
+			final Jogador jogadorAnterior = jogadoresOrdenados[i + 1]
+			final Jogador jogadorAtual = jogadoresOrdenados[i]
+			if (jogadorAnterior <=> jogadorAtual == 0) {
+				empatados.addAll(jogadorAnterior, jogadorAtual)
+			}
+		}
+
+		return !empatados.empty && empatados.first() == jogadorComMaiorPontuacao ?
+			   new ResultadoRodada(Ranking.EMPATE, (Jogador[]) empatados.toArray()) :
+			   new ResultadoRodada(Ranking.VITORIA, jogadorComMaiorPontuacao)
 	}
 
 	void calculeMelhoresMaos(List<Mao> maos) {

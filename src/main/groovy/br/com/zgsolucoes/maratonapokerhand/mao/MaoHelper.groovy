@@ -1,91 +1,114 @@
 package br.com.zgsolucoes.maratonapokerhand.mao
 
 import br.com.zgsolucoes.maratonapokerhand.model.Carta
+import br.com.zgsolucoes.maratonapokerhand.model.Naipe
+import br.com.zgsolucoes.maratonapokerhand.model.ValorCarta
+import com.fasterxml.jackson.databind.ObjectMapper
 
 import java.util.stream.Collectors
 
 class MaoHelper {
 
-	static Mao getMelhorMao(List<Carta> cartas) {
-		Mao mao = new Mao(categoria: Categoria.CARTA_ALTA)
+	final ObjectMapper objectMapper = new ObjectMapper()
+
+	final List<Carta> cartasMesmoNaipe
+	final List<Carta> cartasEmSequencia
+	final Grupo grupo
+
+	MaoHelper(List<Carta> cartas) {
+		this.cartasEmSequencia = extrairCincoCartasEmSequencia(cartas)
+		this.cartasMesmoNaipe = extrairCincoComMesmoNaipe(cartas)
+		this.grupo = agrupe(cartas)
+	}
+
+	Categoria getMelhorMao(List<Carta> cartas) {
+		Categoria categoria = Categoria.CARTA_ALTA
 		Boolean mesmoNaipe = false
 		Boolean sequencia = false
-		Boolean maiorSequencia = false
-		Boolean possuiGrupo = false
 
-		if (possuiCincoComMesmoNaipe(cartas)) {
+		if (this.cartasMesmoNaipe) {
 			mesmoNaipe = true
-			mao.categoria = Categoria.FLUSH
+			categoria = Categoria.FLUSH
 		}
 
-		if (possuiCincoCartasEmSequencia(cartas)) {
+		if (this.cartasEmSequencia) {
 			sequencia = true
-			mao.categoria = Categoria.SEQUENCIA
+			categoria = Categoria.SEQUENCIA
 		}
 
 		if (mesmoNaipe && sequencia) {
-			mao.categoria = Categoria.STRAIGHT_FLUSH
+			categoria = Categoria.STRAIGHT_FLUSH
 		}
 
-		if (mesmoNaipe && sequencia && possuiMaiorSequencia(cartas)) {
-			maiorSequencia = true
-			mao.categoria = Categoria.ROYAL_FLUSH
+		if (mesmoNaipe && sequencia && this.cartasEmSequencia.last().valorCarta == ValorCarta.AS) {
+			categoria = Categoria.ROYAL_FLUSH
 		}
 
-		if (mao.categoria == Categoria.ROYAL_FLUSH || Categoria.STRAIGHT_FLUSH) {
-			return mao
+		if (categoria == Categoria.ROYAL_FLUSH || Categoria.STRAIGHT_FLUSH) {
+			return categoria
 		}
 
 		Grupo grupo = agrupe(cartas)
 		if (grupo.existe()) {
-			possuiGrupo = true
 			if (grupo.qtdPrimeiraCombinacao == 4) {
-				mao.categoria = Categoria.QUADRA
-				return mao
+				return Categoria.QUADRA
 			}
 
 			if (grupo.qtdPrimeiraCombinacao == 3) {
-				mao.categoria = Categoria.TRINCA
+				categoria = Categoria.TRINCA
 			}
 
 			if (grupo.qtdPrimeiraCombinacao == 2) {
-				mao.categoria = Categoria.UM_PAR
+				categoria = Categoria.UM_PAR
 			}
 
 			if (!grupo.possuiGrupo2()) {
-				return mao
+				return categoria
 			} else {
 				if (grupo.qtdSegundaCombinacao == 2) {
-					if (mao.categoria == Categoria.TRINCA) {
-						mao.categoria = Categoria.FULL_HOUSE
+					if (categoria == Categoria.TRINCA) {
+						categoria = Categoria.FULL_HOUSE
 					}
-					if (mao.categoria == Categoria.UM_PAR) {
-						mao.categoria = Categoria.DOIS_PARES
+					if (categoria == Categoria.UM_PAR) {
+						categoria = Categoria.DOIS_PARES
 					}
 				}
 			}
 
 		}
-		return mao
+		return categoria
 	}
 
 
-	Boolean possuiCincoComMesmoNaipe(List<Carta> cartas) {
+	private static List<Carta> extrairCincoComMesmoNaipe(List<Carta> cartas) {
+		final Map<Naipe, List<Carta>> cartasAgrupadas = cartas
+				.stream().collect(Collectors.<Naipe, List<Carta>> groupingBy({ Carta carta -> carta.naipe }))
 
+		return cartasAgrupadas.find { Map.Entry<Naipe, List<Carta>> entry -> entry.value.size() >= 5 }?.value
 	}
 
-	Boolean possuiCincoCartasEmSequencia(List<Carta> cartas) {
+	private static List<Carta> extrairCincoCartasEmSequencia(List<Carta> cartas) {
+		int valorAnterior = cartas[0]?.valorCarta?.ordinal()
+		final List<Carta> cartasEmSequencia = []
 
-	}
+		for (int i = 1; i < cartas.size(); i++) {
+			final int valorAtual = cartas[i].valorCarta.ordinal()
+			if (valorAtual == valorAnterior + 1) {
+				cartasEmSequencia.add(cartas[i])
+				valorAnterior++
+			} else {
+				cartasEmSequencia.clear()
+				valorAnterior = valorAtual
+			}
+		}
 
-	Boolean possuiMaiorSequencia(List<Carta> cartas) {
-
+		return cartasEmSequencia
 	}
 
 	static Grupo agrupe(List<Carta> cartas) {
 		List<List<Carta>> cartasPorValor = cartas.groupBy { it.valorCarta }.entrySet()*.value
 		List<List<Carta>> cartasPorValorOrdenadas = cartasPorValor.stream().sorted(new GrupoComparator()
-				.reversed()).collect(Collectors.<List<Carta>> toList())
+																						   .reversed()).collect(Collectors.<List<Carta>> toList())
 
 		List<Carta> primeiraCombinacao = cartasPorValorOrdenadas.first()
 		List<Carta> segundaCombinacao = cartasPorValorOrdenadas.get(1)

@@ -4,8 +4,41 @@ import br.com.zgsolucoes.maratonapokerhand.model.Carta
 import br.com.zgsolucoes.maratonapokerhand.model.Naipe
 import br.com.zgsolucoes.maratonapokerhand.model.ValorCarta
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class MaoHelperSpec extends Specification {
+
+	final MaoHelper maoHelper = new MaoHelper()
+
+	@Unroll
+	def "Reconhece cartas de mesmo naipe"() {
+		expect:
+		maoHelper.extrairCincoComMesmoNaipe(cartas) == esperado
+
+		where:
+		cartas                                                            | esperado
+		[new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.QUATRO),
+		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DEZ),
+		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.TRES),
+		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SEIS),
+		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SETE),
+		 new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.VALETE),
+		 new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.VALETE),] | true
+
+		[new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.QUATRO),
+		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DEZ),
+		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.TRES),
+		 new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.SEIS),
+		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SETE),
+		 new Carta(naipe: Naipe.OUROS, valorCarta: ValorCarta.OITO),
+		 new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.SETE),]   | false
+	}
+
+	def "PossuiCincoCartasEmSequencia"() {
+	}
+
+	def "PossuiMaiorSequencia"() {
+	}
 
 	def 'agrupe() deve retornar corretamente'() {
 		given: 'Criando Jogador'

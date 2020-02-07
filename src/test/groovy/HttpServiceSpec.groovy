@@ -24,11 +24,28 @@ class HttpServiceSpec extends Specification {
 	}
 
     void 'testa obtem quantidade de rodadas'() {
+
+	}
+
+	void 'testa fluxo de download de jogos'(){
 		setup:
 		HttpService httpService = new HttpService()
 
 		when:
-        List response = httpService.sendSimpleRequest()
+		List<String> listaDeJogos = httpService.obtenhaRodadas()
+
+		then:
+
+		listaDeJogos.size() == 0
+
+	}
+
+    void 'testa '() {
+		setup:
+		HttpService httpService = new HttpService()
+
+		when:
+        List response = httpService.buscaJogosSite()
 
 		then:
 		response.size() == 4724

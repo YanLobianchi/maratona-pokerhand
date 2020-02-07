@@ -37,9 +37,6 @@ class HttpService {
 
 		String req = "REQUEST:" + "\n" + request.getRequestLine() + "\n" + "Headers: " +
 				request.getAllHeaders() + "\n" + EntityUtils.toString() + "\n"
-
-		//todo criar um map ou objeto para armazenar a resposta da requisicao
-
 		HttpClientBuilder.create().build().withCloseable { httpClient ->
 
 			httpClient.execute(request).withCloseable { response ->
@@ -47,68 +44,49 @@ class HttpService {
 				String res = "RESPONSE:" + "\n" + response.getStatusLine() + "\n" + "Headers: " +
 						response.getAllHeaders() + "\n" +
 						(response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : "") + "\n"
-
-				System.out.println(req + "\n" + res)
-
 				return Arrays.asList(req, res)
 			}
 		}
 	}
 
-	List<String> sendSimpleRequest(){
+	List<String> buscaJogosSite(){
 
 		List<String> jogos = []
-
-		URL urlBase = new URL('http://172.22.1.41:8080/poker-game/arquivo/index')
+		URL urlBase = new URL(HttpServiceHelp.urlBase+'/index')
 		HttpURLConnection primeiraRequisicao = (HttpURLConnection) urlBase.openConnection()
 		primeiraRequisicao.setRequestMethod('GET')
 
 		String resultadoPrimeiraReq = (String) primeiraRequisicao.content.text
-		List<String> codigosObtidos = resultadoPrimeiraReq.findAll('(?<=code=)[^"]+')
-
-		String sessionId = obtenhaSession(primeiraRequisicao)
-
+		List<String> codigosObtidos = HttpServiceHelp.obtenhaLinksJogos(resultadoPrimeiraReq) //resultadoPrimeiraReq.findAll('(?<=code=)[^"]+')
+		String sessionId = HttpServiceHelp.obtenhaSession(primeiraRequisicao)
 		HttpURLConnection sessaoAtual = primeiraRequisicao
 
 		for(String codigo in codigosObtidos){
-
-			URL url2 = new URL("http://172.22.1.41:8080/poker-game/arquivo/arquivos?code=${codigo}")
+			URL url2 = new URL(HttpServiceHelp.urlBase+"/arquivos?code=${codigo}")
 			HttpURLConnection segundaRequisicao = (HttpURLConnection) url2.openConnection()
-			segundaRequisicao.setRequestMethod("GET")
-			segundaRequisicao.setRequestProperty('Cookie', getCookies(obtenhaState(sessaoAtual), sessionId))
-			segundaRequisicao.setRequestProperty('Content-Type', 'text/html')
+			HttpServiceHelp.setaParamsRequiscao(segundaRequisicao, sessaoAtual, sessionId)
 			sessaoAtual = segundaRequisicao
 
 			String resultadoSegundaReq = (String) segundaRequisicao.content.text
-			List<String> pastasObtidas = resultadoSegundaReq.findAll('(?<=arquivo\\?id=)[^"]+')
+			List<String> pastasObtidas = HttpServiceHelp.obtenhaLinksArquivos(resultadoSegundaReq) //resultadoSegundaReq.findAll('(?<=arquivo\\?id=)[^"]+')
 
 			for(String pasta in pastasObtidas){
-				URL url3 = new URL("http://172.22.1.41:8080/poker-game/arquivo/arquivo?id=${pasta}")
+				URL url3 = new URL(HttpServiceHelp.urlBase+"/arquivo?id=${pasta}")
 				HttpURLConnection terceiraRequisicao = (HttpURLConnection) url3.openConnection()
-				terceiraRequisicao.setRequestMethod("GET")
-				terceiraRequisicao.setRequestProperty('Cookie', getCookies(obtenhaState(sessaoAtual), sessionId))
-				terceiraRequisicao.setRequestProperty('Content-Type', 'text/html')
+				HttpServiceHelp.setaParamsRequiscao(terceiraRequisicao, sessaoAtual, sessionId)
 				sessaoAtual = terceiraRequisicao
 
 				String resultadoTerceiraReq = (String) terceiraRequisicao.content.text
-
 				jogos.add(resultadoTerceiraReq)
+
+				if (jogos.size() == 5){
+					break
+				} else{
+					continue
+				}
 			}
 		}
-
         return jogos
-	}
-
-	String obtenhaState(HttpURLConnection requisicao){
-		requisicao.responses.toString().find('state=[^\\\\}\\\\;]+')
-	}
-
-	String obtenhaSession(HttpURLConnection requisicao){
-		requisicao.responses.toString().find('JSESSIONID=[^\\}\\;]+')
-	}
-
-	String getCookies(String s1, String s2){
-		return "$s1; $s2"
 	}
 
 	List<String> obtenhaRodadas() {

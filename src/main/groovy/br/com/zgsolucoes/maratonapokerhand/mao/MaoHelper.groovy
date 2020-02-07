@@ -5,8 +5,8 @@ import br.com.zgsolucoes.maratonapokerhand.model.ValorCarta
 
 class MaoHelper {
 
-	Mao getMelhorMao(List<Carta> cartas) {
-		Mao mao = new Mao()
+	static Mao getMelhorMao(List<Carta> cartas) {
+		Mao mao = new Mao(categoria: Categoria.CARTA_ALTA)
 		final Boolean mesmoNaipe
 		final Boolean sequencia
 		final Boolean maiorSequencia
@@ -29,6 +29,9 @@ class MaoHelper {
 		if(mesmoNaipe && sequencia && possuiMaiorSequencia(cartas)) {
 			maiorSequencia = true
 			mao.categoria = Categoria.ROYAL_FLUSH
+		}
+
+		if(mao.categoria == Categoria.ROYAL_FLUSH || Categoria.STRAIGHT_FLUSH) {
 			return mao
 		}
 

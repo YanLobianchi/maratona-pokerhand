@@ -5,7 +5,7 @@ import groovy.transform.CompileStatic
 
 @CompileStatic
 class Mao implements Comparable<Mao> {
-	Categoria categoria
+	Categoria categoria = Categoria.CARTA_ALTA
 	Set<Carta> cartas
 
 	@Override
@@ -18,4 +18,5 @@ class Mao implements Comparable<Mao> {
 			this.categoria = categoria
 		}
 	}
+
 }

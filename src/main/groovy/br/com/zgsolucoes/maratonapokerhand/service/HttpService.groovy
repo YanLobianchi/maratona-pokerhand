@@ -55,22 +55,27 @@ class HttpService {
 
 	List<String> sendSimpleRequest(String url, String method, Map params = null){
 
+		List<String> jogos = []
+
 		URL urlBase = new URL('http://172.22.1.41:8080/poker-game/arquivo/index')
 		HttpURLConnection primeiraRequisicao = (HttpURLConnection) urlBase.openConnection()
 		primeiraRequisicao.setRequestMethod('GET')
 
-		String jsessionid = primeiraRequisicao.getHeaderFields()['Set-Cookie'][1]
-
 		String resultadoPrimeiraReq = (String) primeiraRequisicao.content.text
 		List<String> codigosObtidos = resultadoPrimeiraReq.findAll('(?<=code=)[^"]+')
 
+		String sessionId = obtenhaSession(primeiraRequisicao)
+
+		HttpURLConnection sessaoAtual = primeiraRequisicao
+
 		for(String codigo in codigosObtidos){
+
 			URL url2 = new URL("http://172.22.1.41:8080/poker-game/arquivo/arquivos?code=${codigo}")
 			HttpURLConnection segundaRequisicao = (HttpURLConnection) url2.openConnection()
 			segundaRequisicao.setRequestMethod("GET")
-			segundaRequisicao.setRequestProperty('Cookie', getCookiesParaHeaders(primeiraRequisicao, jsessionid))
+			segundaRequisicao.setRequestProperty('Cookie', getCookies(obtenhaState(sessaoAtual), sessionId))
 			segundaRequisicao.setRequestProperty('Content-Type', 'text/html')
-
+			sessaoAtual = segundaRequisicao
 
 			String resultadoSegundaReq = (String) segundaRequisicao.content.text
 			List<String> pastasObtidas = resultadoSegundaReq.findAll('(?<=arquivo\\?id=)[^"]+')
@@ -79,16 +84,26 @@ class HttpService {
 				URL url3 = new URL("http://172.22.1.41:8080/poker-game/arquivo/arquivo?id=${pasta}")
 				HttpURLConnection terceiraRequisicao = (HttpURLConnection) url3.openConnection()
 				terceiraRequisicao.setRequestMethod("GET")
-				terceiraRequisicao.setRequestProperty('Cookie', getCookiesParaHeaders(segundaRequisicao, jsessionid))
+				terceiraRequisicao.setRequestProperty('Cookie', getCookies(obtenhaState(sessaoAtual), sessionId))
 				terceiraRequisicao.setRequestProperty('Content-Type', 'text/html')
+				sessaoAtual = terceiraRequisicao
 
 				String resultadoTerceiraReq = (String) terceiraRequisicao.content.text
+
+				jogos.add(resultadoTerceiraReq)
 			}
 		}
 	}
 
-	String getCookiesParaHeaders(HttpURLConnection requisicao, String jsessionid){
-		String state = requisicao.getHeaderField('Set-Cookie')
-		return "$state; $jsessionid"
+	String obtenhaState(HttpURLConnection requisicao){
+		requisicao.responses.toString().find('state=[^\\\\}\\\\;]+')
+	}
+
+	String obtenhaSession(HttpURLConnection requisicao){
+		requisicao.responses.toString().find('JSESSIONID=[^\\}\\;]+')
+	}
+
+	String getCookies(String s1, String s2){
+		return "$s1; $s2"
 	}
 }

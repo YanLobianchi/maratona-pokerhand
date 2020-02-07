@@ -7,11 +7,11 @@ import java.util.stream.Collectors
 
 class Rodada {
 
-	BigInteger codigo
+	Long codigo
 	List<Carta> cartas
 	List<Jogador> jogadores
 
-	Rodada(BigInteger codigo, List<Carta> cartas, List<Jogador> jogadores) {
+	Rodada(Long codigo, List<Carta> cartas, List<Jogador> jogadores) {
 		this.codigo = codigo
 		this.cartas = cartas
 		this.jogadores = jogadores

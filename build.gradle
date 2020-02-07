@@ -1,0 +1,16 @@
+plugins {
+    id 'groovy'
+}
+
+group 'br.com.zgsolucoes'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.5.9'
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.3-groovy-2.5'
+
+}

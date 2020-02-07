@@ -10,12 +10,36 @@ class MaoHelper {
 
 	final List<Carta> cartasMesmoNaipe
 	final List<Carta> cartasEmSequencia
-	final Grupo grupo
+	final private Grupo grupo
 
 	MaoHelper(List<Carta> cartas) {
 		this.cartasEmSequencia = extrairCincoCartasEmSequencia(cartas)
 		this.cartasMesmoNaipe = extrairCincoComMesmoNaipe(cartas)
 		this.grupo = agrupe(cartas)
+	}
+
+	Boolean isGrupoExiste() {
+		return grupo.temPeloMenosUmaCombinacao
+	}
+
+	Boolean isGrupoTemDuasCombinacoes() {
+		return grupo.temDuasCombinacoes
+	}
+
+	Integer getQtdPrimeiraCombinacao() {
+		return grupo.temPeloMenosUmaCombinacao ? grupo.qtdPrimeiraCombinacao : 0
+	}
+
+	Integer getQtdSegundaCombinacao() {
+		return grupo.temDuasCombinacoes ? grupo.qtdSegundaCombinacao : 0
+	}
+
+	List<Carta> getPrimeiraCombinacao() {
+		return grupo.primeiraCombinacao
+	}
+
+	List<Carta> getSegundaCombinacao() {
+		return grupo.segundaCombinacao
 	}
 
 	Categoria getMelhorMao(List<Carta> cartas) {
@@ -46,7 +70,7 @@ class MaoHelper {
 		}
 
 		Grupo grupo = agrupe(cartas)
-		if (grupo.existe()) {
+		if (grupo.isTemPeloMenosUmaCombinacao()) {
 			if (grupo.qtdPrimeiraCombinacao == 4) {
 				return Categoria.QUADRA
 			}
@@ -81,7 +105,7 @@ class MaoHelper {
 		final Map<Naipe, List<Carta>> cartasAgrupadas = cartas
 				.stream().collect(Collectors.<Naipe, List<Carta>> groupingBy({ Carta carta -> carta.naipe }))
 
-		return cartasAgrupadas.find { Map.Entry<Naipe, List<Carta>> entry -> entry.value.size() >= 5 }?.value
+		return cartasAgrupadas.find { Map.Entry<Naipe, List<Carta>> entry -> entry.value.size() >= 5 }?.value ?: []
 	}
 
 	private static List<Carta> extrairCincoCartasEmSequencia(List<Carta> cartas) {
@@ -105,8 +129,8 @@ class MaoHelper {
 	static Grupo agrupe(List<Carta> cartas) {
 		List<List<Carta>> cartasPorValor = cartas.groupBy { it.valorCarta }.entrySet()*.value
 		List<List<Carta>> cartasPorValorOrdenadas = cartasPorValor.stream()
-				.sorted(new GrupoComparator().reversed())
-				.collect(Collectors.<List<Carta>> toList())
+																  .sorted(new GrupoComparator().reversed())
+																  .collect(Collectors.<List<Carta>> toList())
 
 		List<Carta> primeiraCombinacao = cartasPorValorOrdenadas.first()
 		List<Carta> segundaCombinacao = cartasPorValorOrdenadas.get(1)

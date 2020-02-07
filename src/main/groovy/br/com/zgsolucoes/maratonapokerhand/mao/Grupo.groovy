@@ -12,11 +12,11 @@ class Grupo {
 		this.segundaCombinacao = segundaCombinacao
 	}
 
-	Boolean existe(){
-		return qtdPrimeiraCombinacao > 1 && possuiGrupo2()
+	Boolean isTemPeloMenosUmaCombinacao() {
+		return qtdPrimeiraCombinacao > 1
 	}
 
-	Boolean possuiGrupo2() {
+	Boolean isTemDuasCombinacoes() {
 		return qtdSegundaCombinacao > 1
 	}
 

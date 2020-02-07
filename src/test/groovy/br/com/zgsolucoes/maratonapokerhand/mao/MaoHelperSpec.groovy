@@ -8,36 +8,63 @@ import spock.lang.Unroll
 
 class MaoHelperSpec extends Specification {
 
-	final MaoHelper maoHelper = new MaoHelper()
-
 	@Unroll
 	def "Reconhece cartas de mesmo naipe"() {
 		expect:
-		maoHelper.extrairCincoComMesmoNaipe(cartas) == esperado
+		new MaoHelper(cartas).cartasMesmoNaipe == cartasMesmoNaipe
 
 		where:
-		cartas                                                            | esperado
+		cartasMesmoNaipe                                             | cartas
 		[new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.QUATRO),
 		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DEZ),
 		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.TRES),
 		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SEIS),
-		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SETE),
-		 new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.VALETE),
-		 new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.VALETE),] | true
+		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SETE)] | cartasMesmoNaipe + [new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.VALETE),
+																						   new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.VALETE),]
 
-		[new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.QUATRO),
-		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DEZ),
-		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.TRES),
-		 new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.SEIS),
-		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SETE),
-		 new Carta(naipe: Naipe.OUROS, valorCarta: ValorCarta.OITO),
-		 new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.SETE),]   | false
+		[]                                                           | [new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.QUATRO),
+																		new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DEZ),
+																		new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.TRES),
+																		new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.SEIS),
+																		new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SETE),
+																		new Carta(naipe: Naipe.OUROS, valorCarta: ValorCarta.OITO),
+																		new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.SETE),]
 	}
 
-	def "PossuiCincoCartasEmSequencia"() {
+	def "Reconhece 5 cartas em sequência"() {
+		given:
+		MaoHelper maoHelper
+		List<Carta> cartasSequencia = [new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DOIS),
+									   new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.TRES),
+									   new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.QUATRO),
+									   new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.CINCO),
+									   new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SEIS)]
+		List<Carta> todasCartas = cartasSequencia + [new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.VALETE),
+													 new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.VALETE),]
+
+		when:
+		maoHelper = new MaoHelper(todasCartas)
+
+		then:
+		maoHelper.cartasEmSequencia == cartasSequencia
 	}
 
-	def "PossuiMaiorSequencia"() {
+	def "Reconhece que não tem 5 cartas em sequência"() {
+		given:
+		MaoHelper maoHelper
+		List<Carta> todasCartas = [new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DOIS),
+								   new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.CINCO),
+								   new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.QUATRO),
+								   new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.CINCO),
+								   new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SEIS),
+								   new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.VALETE),
+								   new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.VALETE),]
+
+		when:
+		maoHelper = new MaoHelper(todasCartas)
+
+		then:
+		maoHelper.cartasEmSequencia == []
 	}
 
 	def 'agrupe() deve retornar corretamente'() {

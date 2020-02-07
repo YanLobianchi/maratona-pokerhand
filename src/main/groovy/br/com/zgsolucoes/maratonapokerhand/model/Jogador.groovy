@@ -4,19 +4,20 @@ import br.com.zgsolucoes.maratonapokerhand.mao.MaoHelper
 import br.com.zgsolucoes.maratonapokerhand.mao.ResultadoMao
 
 class Jogador implements Comparable<Jogador> {
+	private MaoHelper maoHelper
 	List<Carta> cartas
-	MaoHelper maoHelper
 	ResultadoMao melhorMao
 
 
 	Jogador(List<Carta> cartas) {
-
 		this.cartas = cartas
 	}
 
-
-	void adicionarCartas(List<Carta> cartasMesa) {
-		cartas.addAll(cartasMesa)
+	MaoHelper extrairMaoHelper(List<Carta> cartasMesa) {
+		if (!maoHelper) {
+			maoHelper = new MaoHelper(cartas + cartasMesa)
+		}
+		return maoHelper
 	}
 
 	@Override

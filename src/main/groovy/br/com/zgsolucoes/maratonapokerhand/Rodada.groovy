@@ -21,13 +21,11 @@ class Rodada {
 
 	void calculeMelhoresMaos(List<Mao> maos) {
 		for (Jogador jogador in jogadores) {
-			jogador.adicionarCartas(cartas)
-			for (mao in maos) {
-				jogador.melhorMao = mao.reconhecerMao(jogador.maoHelper)
+			for (Mao mao in maos) {
+				jogador.melhorMao = mao.reconhecerMao(jogador.extrairMaoHelper(cartas))
 			}
 		}
 	}
-
 
 
 	List<ResultadoMao> resutados() {

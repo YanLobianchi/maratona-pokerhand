@@ -53,7 +53,7 @@ class HttpService {
 		}
 	}
 
-	List<String> sendSimpleRequest(String url, String method, Map params = null){
+	List<String> sendSimpleRequest(){
 
 		List<String> jogos = []
 
@@ -93,6 +93,8 @@ class HttpService {
 				jogos.add(resultadoTerceiraReq)
 			}
 		}
+
+        return jogos
 	}
 
 	String obtenhaState(HttpURLConnection requisicao){

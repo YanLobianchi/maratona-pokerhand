@@ -10,26 +10,28 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
 
 class HttpService {
-	List<String> sendRequest(String url, String method, Map<String, Object> body = null) {
+
+
+	List<String> sendRequest(String url, String method, Map<String, Object> params = null) {
 		RequestConfig requestConfig = RequestConfig.custom()
 				.setConnectTimeout(2000)
 				.setSocketTimeout(3000)
 				.build()
 		HttpUriRequest request = null
 
-		if (body) {
-			StringEntity entity = new StringEntity(new Gson().toJson(body), "UTF-8")
+		if (params) {
+			StringEntity entity = new StringEntity(new Gson().toJson(params), "UTF-8")
 			request = RequestBuilder.create(method)
 					.setConfig(requestConfig)
 					.setUri(url)
 					.setHeader(HttpHeaders.CONTENT_TYPE, "text/html")
+					.addHeader('Cookie', "state=${params.getAt('state')}; JSESSIONID=${params.getAt('JSESSIONID')}")
 					.setEntity(entity)
 					.build()
 		} else {
 			request = RequestBuilder.create(method)
 					.setConfig(requestConfig)
 					.setUri(url)
-					.setHeader(HttpHeaders.CONTENT_TYPE, "text/html")
 					.build()
 		}
 
@@ -107,5 +109,9 @@ class HttpService {
 
 	String getCookies(String s1, String s2){
 		return "$s1; $s2"
+	}
+
+	List<String> obtenhaRodadas() {
+
 	}
 }

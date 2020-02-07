@@ -19,6 +19,8 @@ enum Naipe {
 		return NaipeCache.CACHE[codigo]
 	}
 
+
+
 	private static class NaipeCache {
 		private static final Map<String, Naipe> CACHE = [:] as HashMap
 

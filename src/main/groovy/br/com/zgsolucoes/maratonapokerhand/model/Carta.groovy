@@ -18,4 +18,9 @@ class Carta implements Comparable<Carta> {
 
 		return 0
 	}
+
+	Carta(Naipe naipe, ValorCarta valorCarta){
+		this.naipe = naipe
+		this.valorCarta = valorCarta
+	}
 }

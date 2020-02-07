@@ -1,16 +1,22 @@
 package br.com.zgsolucoes.maratonapokerhand.model
 
-import br.com.zgsolucoes.maratonapokerhand.mao.Mao
 import br.com.zgsolucoes.maratonapokerhand.mao.MaoHelper
+import br.com.zgsolucoes.maratonapokerhand.mao.ResultadoMao
 
 class Jogador implements Comparable<Jogador> {
 	List<Carta> cartas
+	MaoHelper maoHelper
+	ResultadoMao melhorMao
+
 
 	Jogador(List<Carta> cartas) {
+
 		this.cartas = cartas
 	}
 
-	void calculaMelhorMao() {
+
+	void adicionarCartas(List<Carta> cartasMesa) {
+		cartas.addAll(cartasMesa)
 	}
 
 	@Override
@@ -18,7 +24,4 @@ class Jogador implements Comparable<Jogador> {
 		return 0
 	}
 
-	Mao getMelhorMao(List<Carta> cartas) {
-		return MaoHelper.getMelhorMao(cartas)
-	}
 }

@@ -12,9 +12,10 @@ class MaoHelper {
 	final List<Carta> cartasEmSequencia
 	final private Grupo grupo
 
+
 	MaoHelper(List<Carta> cartas) {
-		this.cartasEmSequencia = extrairCincoCartasEmSequencia(cartas)
 		this.cartasMesmoNaipe = extrairCincoComMesmoNaipe(cartas)
+		this.cartasEmSequencia = extrairCincoCartasEmSequencia(cartas)
 		this.grupo = agrupe(cartas)
 	}
 

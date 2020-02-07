@@ -4,12 +4,12 @@ import br.com.zgsolucoes.maratonapokerhand.model.Carta
 import groovy.transform.CompileStatic
 
 @CompileStatic
-interface Mao extends Comparable<? extends Mao> {
-	Categoria getCategoria()
+class Mao implements Comparable<Mao> {
+	Categoria categoria
+	Set<Carta> cartas
 
-	void setCategoria(final Categoria categoria)
-
-	Set<Carta> getCartas()
-
-	void setCartas(Set<Carta> cartas)
+	@Override
+	int compareTo(Mao o) {
+		return 0
+	}
 }

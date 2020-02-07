@@ -3,13 +3,10 @@ package br.com.zgsolucoes.maratonapokerhand.mao
 import br.com.zgsolucoes.maratonapokerhand.model.Carta
 import br.com.zgsolucoes.maratonapokerhand.model.Naipe
 import br.com.zgsolucoes.maratonapokerhand.model.ValorCarta
-import com.fasterxml.jackson.databind.ObjectMapper
 
 import java.util.stream.Collectors
 
 class MaoHelper {
-
-	final ObjectMapper objectMapper = new ObjectMapper()
 
 	final List<Carta> cartasMesmoNaipe
 	final List<Carta> cartasEmSequencia

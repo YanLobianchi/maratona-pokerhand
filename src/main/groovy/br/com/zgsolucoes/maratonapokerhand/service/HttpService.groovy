@@ -52,4 +52,43 @@ class HttpService {
 			}
 		}
 	}
+
+	List<String> sendSimpleRequest(String url, String method, Map params = null){
+
+		URL urlBase = new URL('http://172.22.1.41:8080/poker-game/arquivo/index')
+		HttpURLConnection primeiraRequisicao = (HttpURLConnection) urlBase.openConnection()
+		primeiraRequisicao.setRequestMethod('GET')
+
+		String jsessionid = primeiraRequisicao.getHeaderFields()['Set-Cookie'][1]
+
+		String resultadoPrimeiraReq = (String) primeiraRequisicao.content.text
+		List<String> codigosObtidos = resultadoPrimeiraReq.findAll('(?<=code=)[^"]+')
+
+		for(String codigo in codigosObtidos){
+			URL url2 = new URL("http://172.22.1.41:8080/poker-game/arquivo/arquivos?code=${codigo}")
+			HttpURLConnection segundaRequisicao = (HttpURLConnection) url2.openConnection()
+			segundaRequisicao.setRequestMethod("GET")
+			segundaRequisicao.setRequestProperty('Cookie', getCookiesParaHeaders(primeiraRequisicao, jsessionid))
+			segundaRequisicao.setRequestProperty('Content-Type', 'text/html')
+
+
+			String resultadoSegundaReq = (String) segundaRequisicao.content.text
+			List<String> pastasObtidas = resultadoSegundaReq.findAll('(?<=arquivo\\?id=)[^"]+')
+
+			for(String pasta in pastasObtidas){
+				URL url3 = new URL("http://172.22.1.41:8080/poker-game/arquivo/arquivo?id=${pasta}")
+				HttpURLConnection terceiraRequisicao = (HttpURLConnection) url3.openConnection()
+				terceiraRequisicao.setRequestMethod("GET")
+				terceiraRequisicao.setRequestProperty('Cookie', getCookiesParaHeaders(segundaRequisicao, jsessionid))
+				terceiraRequisicao.setRequestProperty('Content-Type', 'text/html')
+
+				String resultadoTerceiraReq = (String) terceiraRequisicao.content.text
+			}
+		}
+	}
+
+	String getCookiesParaHeaders(HttpURLConnection requisicao, String jsessionid){
+		String state = requisicao.getHeaderField('Set-Cookie')
+		return "$state; $jsessionid"
+	}
 }

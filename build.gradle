@@ -1,7 +1,10 @@
 plugins {
     id 'java'
     id 'groovy'
+    id 'idea'
 }
+
+sourceCompatibility = 1.8
 
 group 'br.com.zgsolucoes'
 version '1.0-SNAPSHOT'

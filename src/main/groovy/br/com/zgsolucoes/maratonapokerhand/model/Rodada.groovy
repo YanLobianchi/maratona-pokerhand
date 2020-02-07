@@ -36,8 +36,8 @@ class Rodada {
 		}
 
 		return !empatados.empty && empatados.first() == jogadorComMaiorPontuacao ?
-			   new ResultadoRodada(Ranking.EMPATE, (Jogador[]) empatados.toArray()) :
-			   new ResultadoRodada(Ranking.VITORIA, jogadorComMaiorPontuacao)
+			   new ResultadoRodada(this, Ranking.EMPATE, (Jogador[]) empatados.toArray()) :
+			   new ResultadoRodada(this, Ranking.VITORIA, jogadorComMaiorPontuacao)
 	}
 
 	void calculeMelhoresMaos(List<Mao> maos) {

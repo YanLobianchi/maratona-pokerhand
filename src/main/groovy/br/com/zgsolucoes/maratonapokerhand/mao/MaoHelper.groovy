@@ -2,7 +2,6 @@ package br.com.zgsolucoes.maratonapokerhand.mao
 
 import br.com.zgsolucoes.maratonapokerhand.model.Carta
 import br.com.zgsolucoes.maratonapokerhand.model.Naipe
-import br.com.zgsolucoes.maratonapokerhand.model.ValorCarta
 
 import java.util.stream.Collectors
 
@@ -12,11 +11,11 @@ class MaoHelper {
 	final List<Carta> cartasEmSequencia
 	final private Grupo grupo
 
-
-	MaoHelper(List<Carta> cartas) {
-		this.cartasMesmoNaipe = extrairCincoComMesmoNaipe(cartas)
-		this.cartasEmSequencia = extrairCincoCartasEmSequencia(cartas)
-		this.grupo = agrupe(cartas)
+	MaoHelper(final List<Carta> cartas) {
+		final List<Carta> cartasOrdenadas = cartas.stream().sorted().collect(Collectors.<Carta> toList())
+		this.cartasEmSequencia = extrairCincoCartasEmSequencia(cartasOrdenadas)
+		this.cartasMesmoNaipe = extrairCincoComMesmoNaipe(cartasOrdenadas)
+		this.grupo = agrupe(cartasOrdenadas)
 	}
 
 	Boolean isGrupoExiste() {
@@ -43,64 +42,9 @@ class MaoHelper {
 		return grupo.segundaCombinacao
 	}
 
-	Categoria getMelhorMao(List<Carta> cartas) {
-		Categoria categoria = Categoria.CARTA_ALTA
-		Boolean mesmoNaipe = false
-		Boolean sequencia = false
-
-		if (this.cartasMesmoNaipe) {
-			mesmoNaipe = true
-			categoria = Categoria.FLUSH
-		}
-
-		if (this.cartasEmSequencia) {
-			sequencia = true
-			categoria = Categoria.SEQUENCIA
-		}
-
-		if (mesmoNaipe && sequencia) {
-			categoria = Categoria.STRAIGHT_FLUSH
-		}
-
-		if (mesmoNaipe && sequencia && this.cartasEmSequencia.last().valorCarta == ValorCarta.AS) {
-			categoria = Categoria.ROYAL_FLUSH
-		}
-
-		if (categoria == Categoria.ROYAL_FLUSH || Categoria.STRAIGHT_FLUSH) {
-			return categoria
-		}
-
-		Grupo grupo = agrupe(cartas)
-		if (grupo.isTemPeloMenosUmaCombinacao()) {
-			if (grupo.qtdPrimeiraCombinacao == 4) {
-				return Categoria.QUADRA
-			}
-
-			if (grupo.qtdPrimeiraCombinacao == 3) {
-				categoria = Categoria.TRINCA
-			}
-
-			if (grupo.qtdPrimeiraCombinacao == 2) {
-				categoria = Categoria.UM_PAR
-			}
-
-			if (!grupo.possuiGrupo2()) {
-				return categoria
-			} else {
-				if (grupo.qtdSegundaCombinacao == 2) {
-					if (categoria == Categoria.TRINCA) {
-						categoria = Categoria.FULL_HOUSE
-					}
-					if (categoria == Categoria.UM_PAR) {
-						categoria = Categoria.DOIS_PARES
-					}
-				}
-			}
-
-		}
-		return categoria
+	private static Carta extrairMaiorCarta(List<Carta> cartas) {
+		return cartas.last()
 	}
-
 
 	private static List<Carta> extrairCincoComMesmoNaipe(List<Carta> cartas) {
 		final Map<Naipe, List<Carta>> cartasAgrupadas = cartas
@@ -117,6 +61,9 @@ class MaoHelper {
 			final int valorAtual = cartas[i].valorCarta.ordinal()
 			if (valorAtual == valorAnterior + 1) {
 				cartasEmSequencia.add(cartas[i])
+				if (cartasEmSequencia.size() > 5) {
+					cartasEmSequencia.remove(0)
+				}
 				valorAnterior++
 			} else {
 				cartasEmSequencia.clear()

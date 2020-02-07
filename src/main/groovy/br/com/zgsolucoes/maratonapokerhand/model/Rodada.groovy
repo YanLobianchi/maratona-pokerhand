@@ -1,7 +1,6 @@
-package br.com.zgsolucoes.maratonapokerhand
+package br.com.zgsolucoes.maratonapokerhand.model
 
 import br.com.zgsolucoes.maratonapokerhand.mao.Mao
-import br.com.zgsolucoes.maratonapokerhand.mao.ResultadoMao
 import br.com.zgsolucoes.maratonapokerhand.model.Carta
 import br.com.zgsolucoes.maratonapokerhand.model.Jogador
 
@@ -19,6 +18,10 @@ class Rodada {
 		calculeMelhoresMaos(maos)
 	}
 
+	ResultadoRodada obtenhaResultado() {
+
+	}
+
 	void calculeMelhoresMaos(List<Mao> maos) {
 		for (Jogador jogador in jogadores) {
 			for (Mao mao in maos) {
@@ -27,9 +30,5 @@ class Rodada {
 		}
 	}
 
-
-	List<ResultadoMao> resutados() {
-		return jogadores.melhorMao
-	}
 
 }

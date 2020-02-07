@@ -10,12 +10,10 @@ class Rodada {
 	List<Carta> cartas
 	List<Jogador> jogadores
 
-	Rodada(BigInteger codigo, List<Carta> cartas, List<Jogador> jogadores, List<Mao> maos) {
+	Rodada(BigInteger codigo, List<Carta> cartas, List<Jogador> jogadores) {
 		this.codigo = codigo
 		this.cartas = cartas
 		this.jogadores = jogadores
-
-		calculeMelhoresMaos(maos)
 	}
 
 	ResultadoRodada obtenhaResultado() {

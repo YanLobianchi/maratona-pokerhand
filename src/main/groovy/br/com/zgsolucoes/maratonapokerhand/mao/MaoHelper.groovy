@@ -107,8 +107,9 @@ class MaoHelper {
 
 	static Grupo agrupe(List<Carta> cartas) {
 		List<List<Carta>> cartasPorValor = cartas.groupBy { it.valorCarta }.entrySet()*.value
-		List<List<Carta>> cartasPorValorOrdenadas = cartasPorValor.stream().sorted(new GrupoComparator()
-																						   .reversed()).collect(Collectors.<List<Carta>> toList())
+		List<List<Carta>> cartasPorValorOrdenadas = cartasPorValor.stream()
+				.sorted(new GrupoComparator().reversed())
+				.collect(Collectors.<List<Carta>> toList())
 
 		List<Carta> primeiraCombinacao = cartasPorValorOrdenadas.first()
 		List<Carta> segundaCombinacao = cartasPorValorOrdenadas.get(1)

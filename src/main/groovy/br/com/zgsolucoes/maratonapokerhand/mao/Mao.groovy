@@ -12,4 +12,10 @@ class Mao implements Comparable<Mao> {
 	int compareTo(Mao o) {
 		return 0
 	}
+
+	void setCategoria(Categoria categoria) {
+		if(this.categoria < categoria) {
+			this.categoria = categoria
+		}
+	}
 }

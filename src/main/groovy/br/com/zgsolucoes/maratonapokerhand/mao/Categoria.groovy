@@ -4,7 +4,7 @@ enum Categoria {
 	CARTA_ALTA,
 	UM_PAR,
 	DOIS_PARES,
-	TRICA,
+	TRINCA,
 	SEQUENCIA,
 	FLUSH,
 	FULL_HOUSE,

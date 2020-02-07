@@ -1,64 +1,65 @@
 package br.com.zgsolucoes.maratonapokerhand.mao
 
 import br.com.zgsolucoes.maratonapokerhand.model.Carta
-import br.com.zgsolucoes.maratonapokerhand.model.ValorCarta
+
+import java.util.stream.Collectors
 
 class MaoHelper {
 
 	static Mao getMelhorMao(List<Carta> cartas) {
 		Mao mao = new Mao(categoria: Categoria.CARTA_ALTA)
-		final Boolean mesmoNaipe
-		final Boolean sequencia
-		final Boolean maiorSequencia
-		final Boolean possuiGrupo
+		Boolean mesmoNaipe = false
+		Boolean sequencia = false
+		Boolean maiorSequencia = false
+		Boolean possuiGrupo = false
 
-		if(possuiCincoComMesmoNaipe(cartas)) {
+		if (possuiCincoComMesmoNaipe(cartas)) {
 			mesmoNaipe = true
 			mao.categoria = Categoria.FLUSH
 		}
 
-		if(possuiCincoCartasEmSequencia(cartas)){
+		if (possuiCincoCartasEmSequencia(cartas)) {
 			sequencia = true
 			mao.categoria = Categoria.SEQUENCIA
 		}
 
-		if(mesmoNaipe && sequencia) {
+		if (mesmoNaipe && sequencia) {
 			mao.categoria = Categoria.STRAIGHT_FLUSH
 		}
 
-		if(mesmoNaipe && sequencia && possuiMaiorSequencia(cartas)) {
+		if (mesmoNaipe && sequencia && possuiMaiorSequencia(cartas)) {
 			maiorSequencia = true
 			mao.categoria = Categoria.ROYAL_FLUSH
 		}
 
-		if(mao.categoria == Categoria.ROYAL_FLUSH || Categoria.STRAIGHT_FLUSH) {
+		if (mao.categoria == Categoria.ROYAL_FLUSH || Categoria.STRAIGHT_FLUSH) {
 			return mao
 		}
 
 		Grupo grupo = agrupe(cartas)
-		if(grupo.existe()) {
+		if (grupo.existe()) {
 			possuiGrupo = true
-			if(grupo.primeiraCombinacao == 4) {
+			if (grupo.qtdPrimeiraCombinacao == 4) {
 				mao.categoria = Categoria.QUADRA
 				return mao
 			}
 
-			if(grupo.primeiraCombinacao == 3) {
+			if (grupo.qtdPrimeiraCombinacao == 3) {
 				mao.categoria = Categoria.TRINCA
 			}
 
-			if(grupo.primeiraCombinacao == 2) {
+			if (grupo.qtdPrimeiraCombinacao == 2) {
 				mao.categoria = Categoria.UM_PAR
 			}
 
-			if(!grupo.possuiGrupo2()) {
+			if (!grupo.possuiGrupo2()) {
 				return mao
 			} else {
-				if(grupo.segundaCombinacao == 2){
-					if(mao.categoria == Categoria.TRINCA) {
+				if (grupo.qtdSegundaCombinacao == 2) {
+					if (mao.categoria == Categoria.TRINCA) {
 						mao.categoria = Categoria.FULL_HOUSE
 					}
-					if(mao.categoria == Categoria.UM_PAR) {
+					if (mao.categoria == Categoria.UM_PAR) {
 						mao.categoria = Categoria.DOIS_PARES
 					}
 				}
@@ -81,11 +82,13 @@ class MaoHelper {
 
 	}
 
-	Grupo agrupe(List<Carta> cartas) {
-		Map<ValorCarta, List<Carta>> cartasPorValor = cartas.groupBy { it.valorCarta }
-		List<Map.Entry<ValorCarta, List<Carta>>> cartasPorValorOrdenadas = cartasPorValor.entrySet().toList().sort {-it.value.size()}
-		BigInteger primeiraCombinacao = cartasPorValorOrdenadas.first().value.size()
-		BigInteger segundaCombinacao = cartasPorValorOrdenadas.size() > 1 ? cartasPorValorOrdenadas.get(1).value.size() : 0
+	static Grupo agrupe(List<Carta> cartas) {
+		List<List<Carta>> cartasPorValor = cartas.groupBy { it.valorCarta }.entrySet()*.value
+		List<List<Carta>> cartasPorValorOrdenadas = cartasPorValor.stream().sorted(new GrupoComparator()
+				.reversed()).collect(Collectors.<List<Carta>> toList())
+
+		List<Carta> primeiraCombinacao = cartasPorValorOrdenadas.first()
+		List<Carta> segundaCombinacao = cartasPorValorOrdenadas.get(1)
 
 		return new Grupo(primeiraCombinacao, segundaCombinacao)
 	}

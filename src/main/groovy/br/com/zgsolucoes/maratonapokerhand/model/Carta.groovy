@@ -6,6 +6,16 @@ class Carta implements Comparable<Carta> {
 
 	@Override
 	int compareTo(Carta o) {
+		int ordinalThis = valorCarta.ordinal()
+		int ordinalO = o.valorCarta.ordinal()
+		if (ordinalThis > ordinalO) {
+			return 1
+		}
+
+		if (ordinalThis < ordinalO) {
+			return -1
+		}
+
 		return 0
 	}
 }

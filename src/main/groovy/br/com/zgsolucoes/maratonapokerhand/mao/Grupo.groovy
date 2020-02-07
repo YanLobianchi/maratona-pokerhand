@@ -1,20 +1,30 @@
 package br.com.zgsolucoes.maratonapokerhand.mao
 
+import br.com.zgsolucoes.maratonapokerhand.model.Carta
+
 class Grupo {
 
-	BigInteger primeiraCombinacao = 0
-	BigInteger segundaCombinacao = 0
+	List<Carta> primeiraCombinacao
+	List<Carta> segundaCombinacao
 
-	Grupo(BigInteger primeiraCombinacao, BigInteger segundaCombinacao) {
+	Grupo(List<Carta> primeiraCombinacao, List<Carta> segundaCombinacao) {
 		this.primeiraCombinacao = primeiraCombinacao
 		this.segundaCombinacao = segundaCombinacao
 	}
 
 	Boolean existe(){
-		return primeiraCombinacao > 1 && possuiGrupo2()
+		return qtdPrimeiraCombinacao > 1 && possuiGrupo2()
 	}
 
 	Boolean possuiGrupo2() {
-		return segundaCombinacao > 1
+		return qtdSegundaCombinacao > 1
+	}
+
+	BigInteger getQtdPrimeiraCombinacao() {
+		return primeiraCombinacao.size()
+	}
+
+	BigInteger getQtdSegundaCombinacao() {
+		return segundaCombinacao.size()
 	}
 }

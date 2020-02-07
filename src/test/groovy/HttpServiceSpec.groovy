@@ -13,7 +13,7 @@ class HttpServiceSpec extends Specification {
 
 		when:
 		List response = httpAcces.sendRequest(urlRequisicao1, 'GET')
-		String jsessionid = HttpServiceHelp.obtenhaJSessionId(response)
+		String jsessionid = response.get(1).find('JSESSIONID=[^\\}\\;]+')
 		List response2 = httpAcces.sendRequest(urlRequisicao2, 'GET', HttpServiceHelp.obtenhaCookie(response, jsessionid))
 		List response3 = httpAcces.sendRequest(urlRequisicao3, 'GET', HttpServiceHelp.obtenhaCookie(response2, jsessionid))
 
@@ -24,19 +24,6 @@ class HttpServiceSpec extends Specification {
 	}
 
     void 'testa obtem quantidade de rodadas'() {
-
-	}
-
-	void 'testa fluxo de download de jogos'(){
-		setup:
-		HttpService httpService = new HttpService()
-
-		when:
-		List<String> listaDeJogos = httpService.obtenhaRodadas()
-
-		then:
-
-		listaDeJogos.size() == 0
 
 	}
 

@@ -12,7 +12,7 @@ class MaoHelper {
 	final private Grupo grupo
 
 	MaoHelper(final List<Carta> cartas) {
-		final List<Carta> cartasOrdenadas = cartas.stream().sorted().collect(Collectors.<Carta> toList())
+		final List<Carta> cartasOrdenadas = cartas.sort()
 		this.cartasEmSequencia = extrairCincoCartasEmSequencia(cartasOrdenadas)
 		this.cartasMesmoNaipe = extrairCincoComMesmoNaipe(cartasOrdenadas)
 		this.grupo = agrupe(cartasOrdenadas)
@@ -54,24 +54,27 @@ class MaoHelper {
 	}
 
 	private static List<Carta> extrairCincoCartasEmSequencia(List<Carta> cartas) {
-		int valorAnterior = cartas[0]?.valorCarta?.ordinal()
-		final List<Carta> cartasEmSequencia = []
+		int valorAnterior = cartas.first().valorCarta.ordinal()
+		final List<Carta> cartasEmSequencia = [cartas.first()]
 
 		for (int i = 1; i < cartas.size(); i++) {
-			final int valorAtual = cartas[i].valorCarta.ordinal()
+			if (cartasEmSequencia.size() > 5) {
+				cartasEmSequencia.remove(0)
+			}
+			final Carta cartaAtual = cartas[i]
+
+			final int valorAtual = cartaAtual.valorCarta.ordinal()
+
 			if (valorAtual == valorAnterior + 1) {
-				cartasEmSequencia.add(cartas[i])
-				if (cartasEmSequencia.size() > 5) {
-					cartasEmSequencia.remove(0)
-				}
 				valorAnterior++
-			} else {
+			} else if (cartasEmSequencia.size() != 5) {
 				cartasEmSequencia.clear()
 				valorAnterior = valorAtual
 			}
+			cartasEmSequencia.add(cartaAtual)
 		}
 
-		return cartasEmSequencia
+		return cartasEmSequencia.size() == 5 ? cartasEmSequencia : []
 	}
 
 	static Grupo agrupe(List<Carta> cartas) {
@@ -81,7 +84,7 @@ class MaoHelper {
 																  .collect(Collectors.<List<Carta>> toList())
 
 		List<Carta> primeiraCombinacao = cartasPorValorOrdenadas.first()
-		List<Carta> segundaCombinacao = cartasPorValorOrdenadas.get(1)
+		List<Carta> segundaCombinacao = cartasPorValorOrdenadas.size() > 1 ? cartasPorValorOrdenadas.get(1) : []
 
 		return new Grupo(primeiraCombinacao, segundaCombinacao)
 	}

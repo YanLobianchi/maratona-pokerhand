@@ -1,5 +1,5 @@
-import br.com.zgsolucoes.maratonapokerhand.Rodada
 import br.com.zgsolucoes.maratonapokerhand.model.Carta
+import br.com.zgsolucoes.maratonapokerhand.model.Rodada
 import br.com.zgsolucoes.maratonapokerhand.service.HttpService
 import br.com.zgsolucoes.maratonapokerhand.service.HttpServiceHelp
 import spock.lang.Specification
@@ -25,24 +25,24 @@ class HttpServiceSpec extends Specification {
 		response
 	}
 
-    void 'testa obtem quantidade de rodadas'() {
+	void 'testa obtem quantidade de rodadas'() {
 
 	}
 
-    void 'testa '() {
+	void 'testa '() {
 		setup:
 		HttpService httpService = new HttpService()
 
 		when:
-        List response = httpService.buscaJogosSite()
+		List response = httpService.buscaJogosSite()
 
-        then:
-        response.size() == 4724
-    }
+		then:
+		response.size() == 4724
+	}
 
-    void 'teste obtenção de rodadas'() {
-        setup:
-        String text = """<poker>
+	void 'teste obtenção de rodadas'() {
+		setup:
+		String text = """<poker>
         <h0>
         <board>2s Tc 9d 9c 7h</board>
         <p0>Ah Qc</p0>
@@ -65,38 +65,38 @@ class HttpServiceSpec extends Specification {
         </h3>
         </poker>"""
 
-        when:
-        text
+		when:
+		text
 
-        then:
-        List<String> rodadasRegex = text.findAll('(?s)<h\\d+>.+?<\\/h\\d+>')
+		then:
+		List<String> rodadasRegex = text.findAll('(?s)<h\\d+>.+?<\\/h\\d+>')
 
-        List<Rodada> listaStringRodadas = new ArrayList<>()
+		List<Rodada> listaStringRodadas = new ArrayList<>()
 
-        for (String rodada in rodadasRegex) {
+		for (String rodada in rodadasRegex) {
 
-            List<Carta> listaCartaMesa = []
+			List<Carta> listaCartaMesa = []
 
-            String cartasDaMesaRegex = rodadasRegex[0].find('(?<=<board>).+(?=<\\/board>)')
+			String cartasDaMesaRegex = rodadasRegex[0].find('(?<=<board>).+(?=<\\/board>)')
 
-            List<String> listStringCartasMesa = cartasDaMesaRegex.split(' ')
+			List<String> listStringCartasMesa = cartasDaMesaRegex.split(' ')
 
-            for (String cartaMesa in listStringCartasMesa) {
+			for (String cartaMesa in listStringCartasMesa) {
 
-                cartaMesa
-            }
+				cartaMesa
+			}
 
-            List<String> jogadores = rodadasRegex[0].findAll('<p\\d+>.+<\\/p\\d+>')
-            List<String> cartaJogadores = []
-            for (String jogador in jogadores) {
-                cartaJogadores.add(jogador.find('(?<=>)[^<]+'))
-            }
+			List<String> jogadores = rodadasRegex[0].findAll('<p\\d+>.+<\\/p\\d+>')
+			List<String> cartaJogadores = []
+			for (String jogador in jogadores) {
+				cartaJogadores.add(jogador.find('(?<=>)[^<]+'))
+			}
 
-            rodada
-            cartaJogadores
-        }
+			rodada
+			cartaJogadores
+		}
 
-        text
-    }
+		text
+	}
 
 }

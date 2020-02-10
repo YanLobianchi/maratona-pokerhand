@@ -10,37 +10,40 @@ class MaoHelperSpec extends Specification {
 
 	@Unroll
 	def "Reconhece cartas de mesmo naipe"() {
+		given:
+		MaoHelper maoHelper = new MaoHelper(cartas)
+
 		expect:
-		new MaoHelper(cartas).cartasMesmoNaipe == cartasMesmoNaipe
+		maoHelper.cartasMesmoNaipe == cartasMesmoNaipe
 
 		where:
-		cartasMesmoNaipe                                             | cartas
-		[new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.QUATRO),
-		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DEZ),
-		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.TRES),
-		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SEIS),
-		 new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SETE)] | cartasMesmoNaipe + [new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.VALETE),
-																						   new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.VALETE),]
+		cartasMesmoNaipe                          | cartas
+		[new Carta(Naipe.COPAS, ValorCarta.TRES),
+		 new Carta(Naipe.COPAS, ValorCarta.QUATRO),
+		 new Carta(Naipe.COPAS, ValorCarta.SEIS),
+		 new Carta(Naipe.COPAS, ValorCarta.SETE),
+		 new Carta(Naipe.COPAS, ValorCarta.DEZ),] | cartasMesmoNaipe + [new Carta(Naipe.PAUS, ValorCarta.VALETE),
+																		new Carta(Naipe.ESPADAS, ValorCarta.VALETE),]
 
-		[]                                                           | [new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.QUATRO),
-																		new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DEZ),
-																		new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.TRES),
-																		new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.SEIS),
-																		new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SETE),
-																		new Carta(naipe: Naipe.OUROS, valorCarta: ValorCarta.OITO),
-																		new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.SETE),]
+		[]                                        | [new Carta(Naipe.ESPADAS, ValorCarta.QUATRO),
+													 new Carta(Naipe.COPAS, ValorCarta.DEZ),
+													 new Carta(Naipe.COPAS, ValorCarta.TRES),
+													 new Carta(Naipe.PAUS, ValorCarta.SEIS),
+													 new Carta(Naipe.COPAS, ValorCarta.SETE),
+													 new Carta(Naipe.OUROS, ValorCarta.OITO),
+													 new Carta(Naipe.ESPADAS, ValorCarta.SETE),]
 	}
 
 	def "Reconhece 5 cartas em sequência"() {
 		given:
 		MaoHelper maoHelper
-		List<Carta> cartasSequencia = [new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DOIS),
-									   new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.TRES),
-									   new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.QUATRO),
-									   new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.CINCO),
-									   new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SEIS)]
-		List<Carta> todasCartas = cartasSequencia + [new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.VALETE),
-													 new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.VALETE),]
+		List<Carta> cartasSequencia = [new Carta(Naipe.COPAS, ValorCarta.DOIS),
+									   new Carta(Naipe.PAUS, ValorCarta.TRES),
+									   new Carta(Naipe.COPAS, ValorCarta.QUATRO),
+									   new Carta(Naipe.PAUS, ValorCarta.CINCO),
+									   new Carta(Naipe.COPAS, ValorCarta.SEIS)]
+		List<Carta> todasCartas = cartasSequencia + [new Carta(Naipe.PAUS, ValorCarta.VALETE),
+													 new Carta(Naipe.ESPADAS, ValorCarta.VALETE),]
 
 		when:
 		maoHelper = new MaoHelper(todasCartas)
@@ -52,13 +55,13 @@ class MaoHelperSpec extends Specification {
 	def "Reconhece que não tem 5 cartas em sequência"() {
 		given:
 		MaoHelper maoHelper
-		List<Carta> todasCartas = [new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.DOIS),
-								   new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.CINCO),
-								   new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.QUATRO),
-								   new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.CINCO),
-								   new Carta(naipe: Naipe.COPAS, valorCarta: ValorCarta.SEIS),
-								   new Carta(naipe: Naipe.PAUS, valorCarta: ValorCarta.VALETE),
-								   new Carta(naipe: Naipe.ESPADAS, valorCarta: ValorCarta.VALETE),]
+		List<Carta> todasCartas = [new Carta(Naipe.COPAS, ValorCarta.DOIS),
+								   new Carta(Naipe.ESPADAS, ValorCarta.CINCO),
+								   new Carta(Naipe.COPAS, ValorCarta.QUATRO),
+								   new Carta(Naipe.PAUS, ValorCarta.CINCO),
+								   new Carta(Naipe.COPAS, ValorCarta.SEIS),
+								   new Carta(Naipe.PAUS, ValorCarta.VALETE),
+								   new Carta(Naipe.ESPADAS, ValorCarta.VALETE),]
 
 		when:
 		maoHelper = new MaoHelper(todasCartas)
@@ -70,13 +73,13 @@ class MaoHelperSpec extends Specification {
 	def 'agrupe() deve retornar corretamente'() {
 		given: 'Criando Jogador'
 		List<Carta> cartas = [
-				new Carta(valorCarta: ValorCarta.RAINHA, naipe: Naipe.COPAS),
-				new Carta(valorCarta: ValorCarta.RAINHA, naipe: Naipe.ESPADAS),
-				new Carta(valorCarta: ValorCarta.RAINHA, naipe: Naipe.OUROS),
-				new Carta(valorCarta: ValorCarta.CINCO, naipe: Naipe.PAUS),
-				new Carta(valorCarta: ValorCarta.CINCO, naipe: Naipe.OUROS),
-				new Carta(valorCarta: ValorCarta.AS, naipe: Naipe.PAUS),
-				new Carta(valorCarta: ValorCarta.AS, naipe: Naipe.ESPADAS)
+				new Carta(Naipe.COPAS, ValorCarta.RAINHA),
+				new Carta(Naipe.ESPADAS, ValorCarta.RAINHA),
+				new Carta(Naipe.OUROS, ValorCarta.RAINHA),
+				new Carta(Naipe.PAUS, ValorCarta.CINCO),
+				new Carta(Naipe.OUROS, ValorCarta.CINCO),
+				new Carta(Naipe.PAUS, ValorCarta.AS),
+				new Carta(Naipe.ESPADAS, ValorCarta.AS)
 		]
 
 		when: 'executando agrupe()'

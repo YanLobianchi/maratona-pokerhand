@@ -6,16 +6,16 @@ import br.com.zgsolucoes.maratonapokerhand.model.Rodada
 
 class Main {
 
-	List<Mao> maos = [
-			new RoyalFlushMao(),
-			new StraightFlushMao(),
-			new QuadraMao(),
-			new FullHouseMao(),
-			new FlushMao(),
-			new SequenciaMao(),
-			new TrincaMao(),
-			new DoisParesMao(),
+	private final static List<Mao> MAOS = [
 			new UmParMao(),
+			new DoisParesMao(),
+			new TrincaMao(),
+			new SequenciaMao(),
+			new FlushMao(),
+			new FullHouseMao(),
+			new QuadraMao(),
+			new StraightFlushMao(),
+			new RoyalFlushMao(),
 	]
 
 	List<Rodada> rodadas = []
@@ -28,9 +28,8 @@ class Main {
 
 		List<ResultadoRodada> resultadosRodadas = []
 
-		for(rodada in rodadas) {
-			rodada.calculeMelhoresMaos(maos)
-			resultadosRodadas.add(rodada.obtenhaResultado())
+		for (Rodada rodada in rodadas) {
+			resultadosRodadas.add(rodada.obtenhaResultado(MAOS))
 		}
 
 		return resultadosRodadas

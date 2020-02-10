@@ -4,6 +4,8 @@ class StraightFlushMao extends Mao {
 
 	@Override
 	ResultadoMao reconhecerMao(final MaoHelper maoHelper) {
-		return maoHelper.cartasEmSequencia == maoHelper.cartasMesmoNaipe ? new ResultadoMao(Categoria.STRAIGHT_FLUSH, maoHelper.cartasEmSequencia) : null
+		return maoHelper.cartasEmSequencia && maoHelper.cartasMesmoNaipe &&
+					   maoHelper.cartasEmSequencia == maoHelper.cartasMesmoNaipe ?
+			   new ResultadoMao(Categoria.STRAIGHT_FLUSH, maoHelper.cartasEmSequencia) : null
 	}
 }

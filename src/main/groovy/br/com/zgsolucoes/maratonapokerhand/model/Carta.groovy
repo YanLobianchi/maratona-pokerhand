@@ -1,5 +1,8 @@
 package br.com.zgsolucoes.maratonapokerhand.model
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class Carta implements Comparable<Carta> {
 	Naipe naipe
 	ValorCarta valorCarta
